@@ -10,4 +10,6 @@ public interface PenggunaRepository extends JpaRepository<Pengguna, String> {
 
     Optional<Pengguna> findByUsername(String username);
 
+    Optional<Pengguna> findByEmail(String email);
+
 }

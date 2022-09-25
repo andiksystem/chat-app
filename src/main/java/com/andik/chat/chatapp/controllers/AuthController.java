@@ -1,5 +1,8 @@
 package com.andik.chat.chatapp.controllers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,8 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.andik.chat.chatapp.entities.Pengguna;
 import com.andik.chat.chatapp.jwt.JwtUtils;
+import com.andik.chat.chatapp.models.ChangePasswordRequest;
 import com.andik.chat.chatapp.models.JwtResponse;
 import com.andik.chat.chatapp.models.LoginRequest;
+import com.andik.chat.chatapp.models.ResetPasswordRequest;
 import com.andik.chat.chatapp.models.SignupRequest;
 import com.andik.chat.chatapp.models.UserDetailsImpl;
 import com.andik.chat.chatapp.services.PenggunaService;
@@ -50,10 +55,32 @@ public class AuthController {
     @PostMapping("/signup")
     public Pengguna signup(@RequestBody SignupRequest request) {
         Pengguna pengguna = new Pengguna();
-        pengguna.setId(request.getUsername());
+        pengguna.setUsername(request.getUsername());
         pengguna.setPassword(passwordEncoder.encode(request.getPassword()));
         pengguna.setAuthority("USER");
+
+        pengguna.setEmail(request.getEmail());
+        pengguna.setNamaLengkap(request.getNama());
         Pengguna created = penggunaService.create(pengguna);
         return created;
     }
+
+    @PostMapping("/resetPassword")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
+        Pengguna pengguna = penggunaService.resetPassword(request.getEmail());
+        Map<String, Object> map = new HashMap<>();
+        map.put("message", "Permintaan reset password terlah dikirim ke " + request.getEmail());
+        map.put("resetPasswordToken", pengguna.getChangePasswordToken());
+        return ResponseEntity.ok(map);
+    }
+
+    @PostMapping("/changePassword")
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request) {
+        penggunaService.changePassword(request.getUsername(), request.getToken(),
+                passwordEncoder.encode(request.getNewPassword()));
+        Map<String, Object> map = new HashMap<>();
+        map.put("message", "Password telah sukses diubah");
+        return ResponseEntity.ok(map);
+    }
+
 }

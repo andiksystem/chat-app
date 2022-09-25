@@ -1,6 +1,7 @@
 package com.andik.chat.chatapp.entities;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -18,4 +19,8 @@ public class Pengguna implements Serializable {
     private String authority;
     private String namaLengkap;
 
+    private String email;
+    private String changePasswordToken;
+    private Date changePasswordExpriredAt;
+    private Boolean tokenUsed;
 }

@@ -19,6 +19,7 @@ public class JwtResponse implements Serializable {
         this.email = email;
         this.token = accessToken;
     }
+
     public JwtResponse(
             String accessToken,
             String username) {
